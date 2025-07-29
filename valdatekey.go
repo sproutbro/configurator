@@ -5,9 +5,11 @@ import (
 	"strings"
 )
 
+var configLsit = make(map[string]string)
+
 func validateKEY(key string) (any, error) {
 
-	filename, ok := getfile(key)
+	filename, ok := configLsit[key]
 	root, err := findProjectRoot()
 	if !ok || err != nil {
 		return "", errNOKEYErr
