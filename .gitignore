@@ -26,3 +26,4 @@ vendor/
 coverage.txt
 
 data
+tests

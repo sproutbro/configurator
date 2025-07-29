@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package pbparser;
+
+option go_package = "proto/pbparser";
+
+// ===================
+// Config 요청 서비스
+// ===================
+
+service Parserx {
+  rpc ENV (Req) returns (Resp);
+  rpc JSON (Req) returns (Resp);
+  rpc YAML (Req) returns (Resp);
+}
+
+message Req {
+  string key = 1;      // 요청할 설정 키
+}
+
+message Resp {
+  string json = 1;      // 설정 값
+  string error  = 2;     
+}
+
+/*
+git bash 용
+
+protoc -I=/c/project/proto \
+  --go_out=. \
+  --go-grpc_out=. \
+  /c/project/proto/pbparser.proto
+  
+*/

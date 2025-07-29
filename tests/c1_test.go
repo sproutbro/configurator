@@ -1,9 +1,12 @@
 package tests_test
 
 import (
+	"context"
+	"encoding/json"
 	"testing"
 
-	"github.com/sproutbro/filex/internal"
+	"github.com/sproutbro/parserx/internal/parser"
+	pb "github.com/sproutbro/parserx/proto/pbparser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -13,21 +16,57 @@ import (
  */
 func TestConfigurator(t *testing.T) {
 	// 파서 생성
-	f := internal.New()
+	var decode = make(map[string]interface{})
 
-	// ENV 디코딩 테스트
-	decode, err := f.ENV(".env")
+	// sever 생성
+	f := parser.New(nil)
+
+	// ENV 테스트
+	resp, err := f.ENV(context.Background(),
+		&pb.Req{
+			Key: ".env",
+		})
 	require.NoError(t, err)
+	err = json.Unmarshal([]byte(resp.Json), &decode)
+	assert.NoError(t, err)
 	assert.Equal(t, "dev", decode["ENV"])
 
-	// json 디코딩 테스트
-	dcodejson, err := f.JSON("app.json")
-	require.NoError(t, err)
-	assert.Equal(t, "TEST", dcodejson["ENV"])
-	assert.Equal(t, "SECRET", dcodejson["SECRET"])
+}
 
-	// YMAL 디코딩 테스트
-	decodeYAML, err := f.YAML("app.yaml")
+func TestYAML(t *testing.T) {
+
+	f := parser.New(nil)
+
+	var decode = make(map[string]interface{})
+
+	// YAML 테스트
+	resp2, err := f.YAML(context.Background(),
+		&pb.Req{
+			Key: "app.yaml",
+		})
 	require.NoError(t, err)
-	assert.Equal(t, "APP_ENV", decodeYAML["env"])
+	err = json.Unmarshal([]byte(resp2.Json), &decode)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "APP_ENV", decode["env"])
+}
+
+func TestJSON(t *testing.T) {
+
+	var decode = make(map[string]interface{})
+
+	f := parser.New(nil)
+
+	// JOSN 파서 테스트
+	resp3, err := f.JSON(context.Background(),
+		&pb.Req{
+			Key: "app.json",
+		})
+	require.NoError(t, err)
+	assert.IsType(t, "json", resp3.Json)
+
+	err = json.Unmarshal([]byte(resp3.Json), &decode)
+	assert.NoError(t, err)
+	assert.Equal(t, "TEST", decode["ENV"])
+	assert.Equal(t, "SECRET", decode["SECRET"])
 }

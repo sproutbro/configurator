@@ -2,18 +2,22 @@ package parser
 
 import (
 	"bufio"
+	"context"
+	"encoding/json"
 	"os"
 	"strconv"
 	"strings"
+
+	pb "github.com/sproutbro/parserx/proto/pbparser"
 )
 
 // .env 파일 읽기
-func (p *Manager) ENV(filename string) (map[string]interface{}, error) {
+func (p *svc) ENV(ctx context.Context, req *pb.Req) (*pb.Resp, error) {
 	envMap := make(map[string]interface{})
 
-	file, err := os.Open(filename)
+	file, err := os.Open(req.Key)
 	if err != nil {
-		return nil, err
+		return &pb.Resp{Json: "", Error: ""}, err
 	}
 	defer file.Close()
 
@@ -33,7 +37,13 @@ func (p *Manager) ENV(filename string) (map[string]interface{}, error) {
 			envMap[key] = parseValue(val)
 		}
 	}
-	return envMap, nil
+
+	decode, err := json.Marshal(envMap)
+	if err != nil {
+		return &pb.Resp{Json: "", Error: ""}, err
+	}
+
+	return &pb.Resp{Json: string(decode), Error: ""}, nil
 }
 
 // .env 파일 타입추론
