@@ -7,7 +7,7 @@ import (
 
 func validateKEY(key string) (any, error) {
 
-	filename, ok := configLsit[key]
+	filename, ok := getfile(key)
 	root, err := findProjectRoot()
 	if !ok || err != nil {
 		return "", errNOKEYErr
