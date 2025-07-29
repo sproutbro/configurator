@@ -3,21 +3,31 @@ package tests_test
 import (
 	"testing"
 
-	"github.com/sproutbro/configurator"
+	"github.com/sproutbro/filex/internal"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 /*
-*	요청에 응답테스트
-*
-*	고정형식으로 테스트 완료
+*	parser manager로 변경 JSON YAML ENV 파싱확인
  */
 func TestConfigurator(t *testing.T) {
-	v, f := configurator.GetConfig("ddd")
-	assert.Equal(t, "", v)
-	assert.Equal(t, false, f)
+	// 파서 생성
+	f := internal.New()
 
-	v2, f2 := configurator.GetConfig("dev")
-	assert.Equal(t, "dev-config", v2)
-	assert.Equal(t, true, f2)
+	// ENV 디코딩 테스트
+	decode, err := f.ENV(".env")
+	require.NoError(t, err)
+	assert.Equal(t, "dev", decode["ENV"])
+
+	// json 디코딩 테스트
+	dcodejson, err := f.JSON("app.json")
+	require.NoError(t, err)
+	assert.Equal(t, "TEST", dcodejson["ENV"])
+	assert.Equal(t, "SECRET", dcodejson["SECRET"])
+
+	// YMAL 디코딩 테스트
+	decodeYAML, err := f.YAML("app.yaml")
+	require.NoError(t, err)
+	assert.Equal(t, "APP_ENV", decodeYAML["env"])
 }

@@ -1,4 +1,4 @@
-package configurator
+package filex
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func findProjectRoot() (string, error) {
+func FindProjectRoot() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
 		return "", err

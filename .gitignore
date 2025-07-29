@@ -25,8 +25,4 @@ vendor/
 
 coverage.txt
 
-json
-yaml
-env
-tests
-data.go
+data

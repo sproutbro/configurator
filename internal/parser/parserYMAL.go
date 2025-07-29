@@ -1,18 +1,19 @@
-package configurator
+package parser
 
 import (
-	"encoding/json"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
-func parseJSON(filename string) (map[string]interface{}, error) {
+func (p *Manager) YAML(filename string) (map[string]interface{}, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 
 	var config map[string]interface{}
-	if err := json.Unmarshal(data, &config); err != nil {
+	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
 

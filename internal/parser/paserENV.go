@@ -1,4 +1,4 @@
-package configurator
+package parser
 
 import (
 	"bufio"
@@ -8,7 +8,7 @@ import (
 )
 
 // .env 파일 읽기
-func parseEnv(filename string) (map[string]interface{}, error) {
+func (p *Manager) ENV(filename string) (map[string]interface{}, error) {
 	envMap := make(map[string]interface{})
 
 	file, err := os.Open(filename)
