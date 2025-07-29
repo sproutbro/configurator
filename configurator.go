@@ -1,7 +1,16 @@
 package configurator
 
+import (
+	"encoding/json"
+	"log"
+)
+
 type Configurator interface {
 	GetConfig(key string) (value string, found bool)
+}
+
+type ConfigRequest struct {
+	Key string // 키 값
 }
 
 type ConfigResponse struct {
@@ -11,12 +20,12 @@ type ConfigResponse struct {
 
 // GetConfig response Key - request - value found
 func GetConfig(key string) (string, bool) {
-	switch key {
-	case "dev":
-		return "dev-config", true
-	case "prod":
-		return "prod-config", true
-	default:
+	cfg, err := validateKEY(key)
+	if err != nil {
+		log.Println(err)
 		return "", false
 	}
+
+	resBytes, _ := json.Marshal(cfg)
+	return string(resBytes), true
 }
